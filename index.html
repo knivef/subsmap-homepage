@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>subsmap homepage, three versions</title>
+<meta name="description" content="Three design directions for the subsmap marketing homepage: cartographic, editorial, and radar.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FF4500'/%3E%3Ccircle cx='16' cy='16' r='4' fill='black'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='black' stroke-width='1.6'/%3E%3C/svg%3E">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    padding: clamp(32px, 7vw, 88px) 24px 120px;
+    background: #0E0E10;
+    color: #fff;
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; }
+  .kicker {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: #FF4500; margin: 0 0 18px;
+  }
+  h1 {
+    margin: 0; font-size: clamp(2rem, 4.6vw, 3.2rem); font-weight: 500;
+    letter-spacing: -.035em; line-height: 1.04;
+  }
+  .sub { margin: 18px 0 0; max-width: 60ch; color: rgba(255,255,255,.62); font-size: 17px; }
+  .grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+    margin-top: clamp(32px, 5vw, 56px);
+  }
+  .card {
+    display: flex; flex-direction: column;
+    border: 1px solid rgba(255,255,255,.13); border-radius: 16px;
+    background: rgba(255,255,255,.03);
+    text-decoration: none; color: inherit; overflow: hidden;
+    transition: border-color .18s ease, transform .18s ease, background-color .18s ease;
+  }
+  .card:hover { border-color: rgba(255,255,255,.34); background: rgba(255,255,255,.06); transform: translateY(-3px); }
+  .thumb { height: 132px; padding: 16px; display: flex; flex-direction: column; justify-content: center; gap: 7px; }
+  .thumb i { display: block; border-radius: 3px; }
+  .t1 { background: #FAF8F4; }
+  .t1 .a { width: 44%; height: 13px; background: #16181C; }
+  .t1 .b { width: 66%; height: 7px; background: rgba(20,22,26,.28); }
+  .t1 .c { width: 30%; height: 15px; border-radius: 999px; background: #0E7C6B; }
+  .t2 { background: #FFF7F3; }
+  .t2 .a { width: 58%; height: 17px; background: #000; }
+  .t2 .b { width: 70%; height: 7px; background: rgba(0,0,0,.3); }
+  .t2 .c { width: 26%; height: 15px; border-radius: 4px; background: #FF4500; }
+  .t3 { background: #F7F7F7; position: relative; }
+  .t3 .a { width: 52%; height: 18px; background: #000; border-radius: 2px; }
+  .t3 .b { width: 64%; height: 6px; background: rgba(0,0,0,.3); }
+  .t3 .c { width: 34%; height: 15px; border-radius: 999px; background: #000; }
+  .t3 .ring {
+    position: absolute; inset: 18px 12px; border: 1px solid rgba(0,0,0,.16);
+    border-radius: 50%; transform: scaleY(.42);
+  }
+  .t3 .beam {
+    position: absolute; left: 50%; top: 50%; width: 44%; height: 1px;
+    background: #FF4500; transform: rotate(-14deg); transform-origin: left center;
+  }
+  .body { padding: 20px; border-top: 1px solid rgba(255,255,255,.1); }
+  .body h2 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -.02em; }
+  .body p { margin: 9px 0 0; font-size: 14px; color: rgba(255,255,255,.58); }
+  .meta {
+    margin-top: 16px; display: flex; flex-wrap: wrap; gap: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px;
+    letter-spacing: .08em; text-transform: uppercase;
+  }
+  .meta span { padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); }
+  .note {
+    margin-top: clamp(32px, 5vw, 48px); padding-top: 22px;
+    border-top: 1px solid rgba(255,255,255,.1);
+    font-size: 13.5px; color: rgba(255,255,255,.46); max-width: 76ch;
+  }
+  .note b { color: rgba(255,255,255,.75); font-weight: 600; }
+  kbd {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px;
+    padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,.12); color: #fff;
+  }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } .thumb { height: 108px; } }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">subsmap / marketing homepage</p>
+    <h1>Three design directions.</h1>
+    <p class="sub">
+      Same content, same structure, same honest placeholders. Only the design language changes.
+      Open any one, then use the switcher at the bottom of the page to compare, or press
+      <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd>.
+    </p>
+
+    <div class="grid">
+      <a class="card" href="/cartographic/">
+        <div class="thumb t1">
+          <i class="a"></i><i class="b"></i><i class="c"></i>
+        </div>
+        <div class="body">
+          <h2>1. Cartographic</h2>
+          <p>Warm paper canvas, teal accent, serif display. Map-room feel, softest of the three.</p>
+          <div class="meta"><span>Instrument Serif</span><span>#0E7C6B</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="/editorial/">
+        <div class="thumb t2">
+          <i class="a"></i><i class="b"></i><i class="c"></i>
+        </div>
+        <div class="body">
+          <h2>2. Editorial</h2>
+          <p>Modern Business Intelligence language on the Reddit palette. Flat surfaces, no shadows, 96px serif.</p>
+          <div class="meta"><span>Fraunces</span><span>#FF4500</span></div>
+        </div>
+      </a>
+
+      <a class="card" href="/radar/">
+        <div class="thumb t3">
+          <span class="ring"></span><span class="beam"></span>
+          <i class="a"></i><i class="b"></i><i class="c"></i>
+        </div>
+        <div class="body">
+          <h2>3. Radar</h2>
+          <p>deepsec hero rebuilt in canvas: a sweep that detects subreddits, plus motion through every section.</p>
+          <div class="meta"><span>Inter Tight</span><span>Animated</span></div>
+        </div>
+      </a>
+    </div>
+
+    <p class="note">
+      <b>Before any of these ships:</b> every number is a placeholder, the FAQ answers need to match
+      how subsmap actually works, the hero search is not wired to the app, and the nav and footer
+      links point at paths that do not exist yet. Each file marks these with an HTML comment.
+      The version switcher is review chrome and is not part of any of the three designs, so remove
+      the <code>switcher.js</code> script tag before shipping one on its own.
+    </p>
+  </div>
+</body>
+</html>

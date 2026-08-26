@@ -1,0 +1,844 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>subsmap | The map of Reddit</title>
+<meta name="description" content="subsmap maps every subreddit so you can find the communities worth posting in, the connected communities your users overlap into, the posts that actually landed, and the redditors worth paying.">
+
+<!-- Open Graph. REPLACE the URL and image before launch. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="subsmap | The map of Reddit">
+<meta property="og:description" content="Find the subreddits your customers actually live in.">
+<meta property="og:url" content="https://subsmap.com/">
+<meta property="og:image" content="https://subsmap.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23FF4500'/%3E%3Ccircle cx='16' cy='16' r='4' fill='black'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='black' stroke-width='1.6'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ==========================================================================
+     NAV. Paper white, logo left, centred links, ghost + filled CTA pair right.
+     ========================================================================== -->
+<header class="nav" id="nav">
+  <div class="wrap nav__inner">
+    <a class="logo" href="/">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+        <rect width="28" height="28" rx="4" fill="#FF4500"/>
+        <circle cx="14" cy="14" r="3.4" fill="#000"/>
+        <circle cx="14" cy="14" r="7.4" stroke="#000" stroke-width="1.5"/>
+        <circle cx="14" cy="14" r="11" stroke="#000" stroke-width="1.5" stroke-opacity=".45"/>
+      </svg>
+      subsmap
+    </a>
+
+    <nav class="nav__links" aria-label="Main">
+      <a href="#map">Map</a>
+      <a href="#features">Features</a>
+      <a href="#data">Data</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn btn--fill" href="#explore">Explore the map free</a>
+    </nav>
+
+    <div class="nav__actions">
+      <a class="btn btn--ghost btn--sm" href="#login">Log in</a>
+      <a class="btn btn--fill btn--sm" href="#explore">Explore the map free</a>
+    </div>
+
+    <button class="nav__toggle" id="navToggle" aria-label="Menu" aria-expanded="false"><span></span></button>
+  </div>
+</header>
+
+<!-- ==========================================================================
+     HERO. Asymmetric split: display serif left, black stat cards right.
+     ========================================================================== -->
+<section class="hero" id="explore">
+  <div class="wrap">
+    <div class="hero__grid">
+      <div>
+        <a class="tagline" href="#data"><i></i> Refreshed daily</a>
+        <h1 class="display">The map of Reddit.</h1>
+        <p class="lead">
+          Search any niche and get the subreddits worth posting in, the connected communities
+          your users overlap into, the posts that actually landed, and the redditors worth paying.
+        </p>
+
+        <form class="searchbar" id="heroSearch" action="#" onsubmit="return false;">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="9" cy="9" r="6.25" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M13.6 13.6 17.5 17.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input id="heroInput" type="text" autocomplete="off"
+                 placeholder="Describe your product or niche"
+                 aria-label="Describe your product or niche">
+          <button class="btn btn--fill" type="submit">Map it</button>
+        </form>
+
+        <ul class="chips" aria-label="Example searches">
+          <li>Try</li>
+          <li><button type="button" data-q="AI note taking app for students">AI note taking app</button></li>
+          <li><button type="button" data-q="home espresso equipment">home espresso gear</button></li>
+          <li><button type="button" data-q="indie game dev tools">indie game dev tools</button></li>
+        </ul>
+      </div>
+
+      <!-- REPLACE every number below with your real figures -->
+      <div>
+        <div class="statcard statcard--accent">
+          <span class="statcard__label">Communities mapped</span>
+          <div class="statcard__num">3,412,880</div>
+          <p class="statcard__note">Every public subreddit, scored for fit against any niche you search.</p>
+        </div>
+        <div class="statgrid">
+          <div class="statcard">
+            <span class="statcard__label">Redditors ranked</span>
+            <div class="statcard__num">118M</div>
+          </div>
+          <div class="statcard">
+            <span class="statcard__label">Posts read</span>
+            <div class="statcard__num">4.1B</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map sits in a canvas mat, the place MBI would put documentary photography.
+         Swap this SVG for the live map embed when you wire it up. -->
+    <div class="mat" id="map">
+      <div class="panel">
+        <div class="panel__head">
+          <span class="seg is-active">Map</span>
+          <span class="seg">Overlap</span>
+          <span class="seg">Posts</span>
+          <span class="seg">Voices</span>
+          <span class="spacer">bootstrapped B2B SaaS &middot; 41 communities</span>
+        </div>
+
+        <svg class="map-svg" viewBox="0 0 900 500" role="img"
+             aria-label="A map of subreddits related to bootstrapped B2B SaaS, sized by activity, connected by lines where their members overlap.">
+          <defs>
+            <pattern id="grid" width="45" height="45" patternUnits="userSpaceOnUse">
+              <path d="M45 0H0V45" class="m-grid" fill="none"/>
+            </pattern>
+          </defs>
+          <rect width="900" height="500" fill="url(#grid)"/>
+
+          <path class="m-blob" d="M120 200c40-90 190-118 268-70s88 186 18 246-228 40-278-40-48-46-8-136Z"/>
+          <path class="m-blob2" d="M500 110c70-40 188-20 238 60s10 188-80 208-188-30-198-110-30-118 40-158Z"/>
+
+          <g>
+            <line class="m-link-hot" x1="300" y1="240" x2="468" y2="318"/>
+            <line class="m-link-hot" x1="300" y1="240" x2="172" y2="356"/>
+            <line class="m-link-hot" x1="300" y1="240" x2="152" y2="142"/>
+            <line class="m-link" x1="300" y1="240" x2="452" y2="132"/>
+            <line class="m-link" x1="300" y1="240" x2="98"  y2="256"/>
+            <line class="m-link" x1="300" y1="240" x2="348" y2="432"/>
+            <line class="m-link" x1="468" y1="318" x2="618" y2="206"/>
+            <line class="m-link" x1="468" y1="318" x2="688" y2="390"/>
+            <line class="m-link" x1="452" y1="132" x2="618" y2="206"/>
+            <line class="m-link" x1="618" y1="206" x2="762" y2="134"/>
+            <line class="m-link" x1="172" y1="356" x2="348" y2="432"/>
+          </g>
+
+          <circle class="m-node-hi" cx="300" cy="240" r="34"/>
+          <text class="m-label" x="300" y="296" text-anchor="middle">r/SaaS</text>
+          <text class="m-sub"   x="300" y="313" text-anchor="middle">312k members</text>
+          <g>
+            <rect class="m-chip" x="338" y="186" width="60" height="22" rx="4"/>
+            <text class="m-chip-text" x="368" y="201" text-anchor="middle">FIT 94</text>
+          </g>
+
+          <circle class="m-node" cx="468" cy="318" r="28"/>
+          <text class="m-label" x="468" y="368" text-anchor="middle">r/Entrepreneur</text>
+          <text class="m-sub"   x="468" y="385" text-anchor="middle">4.1m members</text>
+
+          <circle class="m-node-hi" cx="172" cy="356" r="24"/>
+          <text class="m-label" x="172" y="402" text-anchor="middle">r/indiehackers</text>
+          <text class="m-sub"   x="172" y="419" text-anchor="middle">86k members</text>
+
+          <circle class="m-node" cx="152" cy="142" r="20"/>
+          <text class="m-label" x="152" y="186" text-anchor="middle">r/startups</text>
+
+          <circle class="m-node" cx="452" cy="132" r="18"/>
+          <text class="m-label" x="452" y="174" text-anchor="middle">r/marketing</text>
+
+          <circle class="m-node" cx="618" cy="206" r="16"/>
+          <text class="m-label" x="618" y="246" text-anchor="middle">r/webdev</text>
+
+          <circle class="m-node" cx="688" cy="390" r="20"/>
+          <text class="m-label" x="688" y="434" text-anchor="middle">r/SideProject</text>
+
+          <circle class="m-node" cx="762" cy="134" r="14"/>
+          <text class="m-label" x="762" y="172" text-anchor="middle">r/microsaas</text>
+
+          <circle class="m-node" cx="98" cy="256" r="13"/>
+          <text class="m-label" x="98" y="293" text-anchor="middle">r/smallbusiness</text>
+
+          <circle class="m-node" cx="348" cy="432" r="15"/>
+          <text class="m-label" x="348" y="471" text-anchor="middle">r/growmybusiness</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     FEATURES. Alternating two column bands, paper white.
+     ========================================================================== -->
+<section class="band band--paper" id="features">
+  <div class="wrap">
+
+    <div class="feature">
+      <div class="feature__copy">
+        <span class="eyebrow">Discovery</span>
+        <h2 class="heading-lg">Find the subreddits for your niche in seconds.</h2>
+        <p class="body-copy">
+          Describe your product in plain language. subsmap ranks every relevant community by
+          fit, size, real activity and how tolerant the mods are of self promotion, so you know
+          where to start and where not to waste a post.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--fill" href="#explore">Try a search</a>
+          <a class="textlink" href="#faq">How the fit score works</a>
+        </div>
+      </div>
+
+      <div class="feature__visual">
+        <div class="panel">
+          <div class="panel__head">
+            <strong>41 communities</strong>
+            <span>for &ldquo;bootstrapped B2B SaaS&rdquo;</span>
+            <span class="spacer tag tag--outline">Sorted by fit</span>
+          </div>
+          <div>
+            <div class="row">
+              <div class="row__mark row__mark--fill">S</div>
+              <div class="row__main">
+                <div class="row__name">r/SaaS</div>
+                <div class="row__meta">312k members &middot; 84 posts/day &middot; <span class="pos">promo friendly</span></div>
+              </div>
+              <div class="row__right"><div class="meter"><span style="width:94%"></span></div><div class="fit">94</div></div>
+            </div>
+            <div class="row">
+              <div class="row__mark row__mark--fill">I</div>
+              <div class="row__main">
+                <div class="row__name">r/indiehackers</div>
+                <div class="row__meta">86k members &middot; 31 posts/day &middot; <span class="pos">promo friendly</span></div>
+              </div>
+              <div class="row__right"><div class="meter"><span style="width:89%"></span></div><div class="fit">89</div></div>
+            </div>
+            <div class="row">
+              <div class="row__mark">M</div>
+              <div class="row__main">
+                <div class="row__name">r/microsaas</div>
+                <div class="row__meta">44k members &middot; 12 posts/day &middot; <span class="pos">promo friendly</span></div>
+              </div>
+              <div class="row__right"><div class="meter"><span style="width:81%"></span></div><div class="fit">81</div></div>
+            </div>
+            <div class="row">
+              <div class="row__mark">E</div>
+              <div class="row__main">
+                <div class="row__name">r/Entrepreneur</div>
+                <div class="row__meta">4.1m members &middot; 210 posts/day &middot; strict mods</div>
+              </div>
+              <div class="row__right"><div class="meter"><span style="width:66%"></span></div><div class="fit">66</div></div>
+            </div>
+            <div class="row">
+              <div class="row__mark">S</div>
+              <div class="row__main">
+                <div class="row__name">r/startups</div>
+                <div class="row__meta">1.8m members &middot; 96 posts/day &middot; <span class="neg">no self promo</span></div>
+              </div>
+              <div class="row__right"><div class="meter"><span style="width:48%"></span></div><div class="fit">48</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature feature--flip">
+      <div class="feature__copy">
+        <span class="eyebrow">Overlap graph</span>
+        <h2 class="heading-lg">See where else your users hang out.</h2>
+        <p class="body-copy">
+          Communities are connected by the people who post in both. The overlap graph shows the
+          adjacent subreddits your audience moves through, computed from real commenter
+          co-occurrence. This is where most of the untapped distribution sits.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--fill" href="#explore">See the graph</a>
+        </div>
+      </div>
+
+      <div class="feature__visual">
+        <div class="panel">
+          <div class="panel__head">
+            <strong>Overlap</strong>
+            <span>r/SaaS and its neighbours</span>
+            <span class="spacer tag tag--accent">Shared commenters</span>
+          </div>
+          <svg class="map-svg" viewBox="0 0 640 400" role="img"
+               aria-label="Overlap graph. r slash SaaS at the centre, connected to five subreddits labelled by percentage of shared commenters.">
+            <line class="m-link-hot" x1="320" y1="200" x2="140" y2="96"  stroke-width="6"/>
+            <line class="m-link-hot" x1="320" y1="200" x2="510" y2="112" stroke-width="4.5"/>
+            <line class="m-link-hot" x1="320" y1="200" x2="128" y2="296" stroke-width="3.4"/>
+            <line class="m-link" x1="320" y1="200" x2="496" y2="306" stroke-width="2.4"/>
+            <line class="m-link" x1="320" y1="200" x2="326" y2="356" stroke-width="1.6"/>
+
+            <circle class="m-node-hi" cx="320" cy="200" r="32"/>
+            <text class="m-label" x="320" y="254" text-anchor="middle">r/SaaS</text>
+
+            <circle class="m-node-alt" cx="140" cy="96" r="24"/>
+            <text class="m-label" x="140" y="46" text-anchor="middle">r/Entrepreneur</text>
+            <text class="m-chip-text" x="140" y="101" text-anchor="middle">38%</text>
+
+            <circle class="m-node" cx="510" cy="112" r="21"/>
+            <text class="m-label" x="510" y="62" text-anchor="middle">r/indiehackers</text>
+            <text class="m-sub" x="510" y="117" text-anchor="middle">31%</text>
+
+            <circle class="m-node" cx="128" cy="296" r="19"/>
+            <text class="m-label" x="128" y="338" text-anchor="middle">r/startups</text>
+            <text class="m-sub" x="128" y="301" text-anchor="middle">27%</text>
+
+            <circle class="m-node" cx="496" cy="306" r="16"/>
+            <text class="m-label" x="496" y="346" text-anchor="middle">r/marketing</text>
+            <text class="m-sub" x="496" y="311" text-anchor="middle">19%</text>
+
+            <circle class="m-node" cx="326" cy="356" r="13"/>
+            <text class="m-label" x="326" y="392" text-anchor="middle">r/webdev</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="feature__copy">
+        <span class="eyebrow">What works</span>
+        <h2 class="heading-lg">Learn what gets upvoted before you post.</h2>
+        <p class="body-copy">
+          The top performing threads from any subreddit, sorted by what actually worked, with
+          the format, length and posting time that carried them. Copy the shape of the post,
+          not the content.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--fill" href="#explore">Browse top posts</a>
+        </div>
+      </div>
+
+      <div class="feature__visual">
+        <div class="panel">
+          <div class="panel__head">
+            <strong>Top posts</strong>
+            <span>r/SaaS &middot; last 12 months</span>
+            <span class="spacer tag tag--outline">By engagement</span>
+          </div>
+          <div>
+            <div class="post">
+              <div class="post__votes"><b>4.2k</b><small>Upvotes</small></div>
+              <div>
+                <div class="post__title">I spent 18 months building the wrong thing. Here is the checklist I use now.</div>
+                <div class="post__meta">
+                  <span class="tag">Story</span><span class="tag tag--accent">1,100 words</span>
+                  <span>Tue 09:14 ET</span><span>&middot;</span><span>612 comments</span>
+                </div>
+              </div>
+            </div>
+            <div class="post">
+              <div class="post__votes"><b>3.8k</b><small>Upvotes</small></div>
+              <div>
+                <div class="post__title">Teardown of my pricing page after 40 customer calls</div>
+                <div class="post__meta">
+                  <span class="tag">Teardown</span><span class="tag tag--accent">Image + text</span>
+                  <span>Thu 11:02 ET</span><span>&middot;</span><span>390 comments</span>
+                </div>
+              </div>
+            </div>
+            <div class="post">
+              <div class="post__votes"><b>2.9k</b><small>Upvotes</small></div>
+              <div>
+                <div class="post__title">Ask me anything about getting the first 100 paying users</div>
+                <div class="post__meta">
+                  <span class="tag">AMA</span><span class="tag tag--dark">High reply rate</span>
+                  <span>Sat 08:40 ET</span><span>&middot;</span><span>844 comments</span>
+                </div>
+              </div>
+            </div>
+            <div class="post">
+              <div class="post__votes"><b>2.1k</b><small>Upvotes</small></div>
+              <div>
+                <div class="post__title">Our churn dropped 40% after one onboarding change</div>
+                <div class="post__meta">
+                  <span class="tag">Data</span><span class="tag tag--accent">Short form</span>
+                  <span>Wed 10:20 ET</span><span>&middot;</span><span>176 comments</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature feature--flip">
+      <div class="feature__copy">
+        <span class="eyebrow">Top voices</span>
+        <h2 class="heading-lg">Find the voices worth reaching out to.</h2>
+        <p class="body-copy">
+          The most influential redditors in any community, ranked by karma earned there,
+          posting cadence and how often people reply to them. A ready made shortlist for
+          paid posts, AMAs, collaborations or a quiet DM.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--fill" href="#explore">See top voices</a>
+        </div>
+      </div>
+
+      <div class="feature__visual">
+        <div class="panel">
+          <div class="panel__head">
+            <strong>Top voices</strong>
+            <span>r/SaaS</span>
+            <span class="spacer tag tag--outline">By in-sub influence</span>
+          </div>
+          <div>
+            <div class="row">
+              <div class="row__mark row__mark--fill">01</div>
+              <div class="row__main">
+                <div class="row__name">u/shipfastorbust</div>
+                <div class="row__meta">128k karma in sub &middot; 41 posts &middot; replies to 78% of comments</div>
+              </div>
+              <span class="tag tag--accent">Open to collabs</span>
+            </div>
+            <div class="row">
+              <div class="row__mark row__mark--dark">02</div>
+              <div class="row__main">
+                <div class="row__name">u/pricingnerd</div>
+                <div class="row__meta">96k karma in sub &middot; 22 posts &middot; replies to 64% of comments</div>
+              </div>
+              <span class="tag">Weekly poster</span>
+            </div>
+            <div class="row">
+              <div class="row__mark row__mark--dark">03</div>
+              <div class="row__main">
+                <div class="row__name">u/coldstartclaire</div>
+                <div class="row__meta">74k karma in sub &middot; 58 posts &middot; replies to 81% of comments</div>
+              </div>
+              <span class="tag tag--dark">Top 1% reach</span>
+            </div>
+            <div class="row">
+              <div class="row__mark">04</div>
+              <div class="row__main">
+                <div class="row__name">u/bootstrapbrian</div>
+                <div class="row__meta">61k karma in sub &middot; 17 posts &middot; replies to 52% of comments</div>
+              </div>
+              <span class="tag">Mod</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==========================================================================
+     DATA. Dark band. REPLACE numbers and the method sentence with your real ones.
+     ========================================================================== -->
+<section class="band band--dark" id="data">
+  <div class="wrap">
+    <div class="data-head">
+      <span class="eyebrow eyebrow--on-dark">The data</span>
+      <h2 class="heading-lg">Built on 4.1 billion posts and comments.</h2>
+    </div>
+
+    <div class="data-grid">
+      <div>
+        <p class="body-copy">
+          The map is not a one time scrape. subsmap re-reads public Reddit activity daily,
+          recomputes community overlap from commenter co-occurrence, and re-scores every
+          subreddit.
+        </p>
+        <ul class="factlist">
+          <li><span>Refresh cadence</span><b>Every 24 hours</b></li>
+          <li><span>Performance history</span><b>Rolling 12 months</b></li>
+          <li><span>Source</span><b>Public Reddit only</b></li>
+        </ul>
+      </div>
+
+      <div class="chart-wrap">
+        <svg class="map-svg" viewBox="0 0 820 300" role="img"
+             aria-label="Chart of growth in indexed posts, ranked redditors and mapped subreddits over twelve months.">
+          <g class="c-grid">
+            <line x1="56" y1="40"  x2="800" y2="40"/>
+            <line x1="56" y1="100" x2="800" y2="100"/>
+            <line x1="56" y1="160" x2="800" y2="160"/>
+            <line x1="56" y1="230" x2="800" y2="230"/>
+          </g>
+
+          <path class="c-area" d="M56 224 C180 216 250 202 340 180 C450 152 540 118 640 88 C720 64 770 52 800 46 L800 230 L56 230 Z"/>
+          <path class="c-line-1" d="M56 224 C180 216 250 202 340 180 C450 152 540 118 640 88 C720 64 770 52 800 46"/>
+          <path class="c-line-2" d="M56 228 C190 222 270 212 360 198 C470 180 560 156 660 134 C740 116 780 108 800 102"/>
+          <path class="c-line-3" d="M56 229 C200 226 300 222 390 214 C500 204 590 190 690 176 C760 166 790 160 800 156"/>
+
+          <g class="c-axis">
+            <text x="56"  y="256">SEP</text>
+            <text x="180" y="256">NOV</text>
+            <text x="304" y="256">JAN</text>
+            <text x="428" y="256">MAR</text>
+            <text x="552" y="256">MAY</text>
+            <text x="676" y="256">JUL</text>
+            <text x="772" y="256">NOW</text>
+            <text x="16" y="44">4B</text>
+            <text x="16" y="104">3B</text>
+            <text x="16" y="164">2B</text>
+            <text x="16" y="234">0</text>
+          </g>
+        </svg>
+
+        <div class="legend">
+          <span><i style="background:#FF4500"></i>Posts and comments indexed</span>
+          <span><i style="background:#FFFFFF"></i>Redditors ranked</span>
+          <span><i style="background:rgba(255,255,255,.4)"></i>Subreddits mapped</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     CARD GRID
+     ========================================================================== -->
+<section class="band band--canvas">
+  <div class="wrap">
+    <span class="eyebrow">Everything else</span>
+    <h2 class="heading-lg" style="max-width:20ch">From zero to a working Reddit channel.</h2>
+    <p class="body-copy">The map is the start. These are the details that decide whether a post lands or gets removed.</p>
+
+    <div class="cards">
+      <div class="card card--wide">
+        <div class="card__top">
+          <div class="card__icon">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4 3h9l3 3v11H4V3Z" stroke="currentColor" stroke-width="1.6"/><path d="M7 9h6M7 12h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Rules and mod strictness, summarised</h3>
+        </div>
+        <p>Every subreddit's posting rules parsed into plain answers: can you link, can you self promote, is there a karma or account age gate, how often are posts removed.</p>
+        <div class="card__viz">
+          <div class="kv"><span>Links allowed</span><b>In comments only</b></div>
+          <div class="kv"><span>Self promotion</span><b>1 in 10 posts</b></div>
+          <div class="kv"><span>Account age gate</span><b>30 days</b></div>
+          <div class="kv"><span>Removal rate</span><b>18% of new posts</b></div>
+        </div>
+      </div>
+
+      <div class="card card--wide">
+        <div class="card__top">
+          <div class="card__icon">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M10 6v4l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Best time to post, per community</h3>
+        </div>
+        <p>Activity by hour and weekday for the exact subreddit you are targeting, in your timezone, based on when top posts were actually submitted.</p>
+        <div class="card__viz">
+          <div class="heat">
+            <i style="opacity:.1"></i><i style="opacity:.16"></i><i style="opacity:.28"></i><i style="opacity:.48"></i>
+            <i style="opacity:.82"></i><i style="opacity:1"></i><i style="opacity:.7"></i><i style="opacity:.54"></i>
+            <i style="opacity:.4"></i><i style="opacity:.28"></i><i style="opacity:.18"></i><i style="opacity:.12"></i>
+          </div>
+          <div class="kv" style="border-top:0;padding-top:12px"><span>Peak window</span><b>Tue 09:00 to 11:00</b></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__top">
+          <div class="card__icon">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Saved lists and CSV export</h3>
+        </div>
+        <p>Group target subreddits into campaigns and take the whole list with you.</p>
+      </div>
+
+      <div class="card">
+        <div class="card__top">
+          <div class="card__icon">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M13.5 13.5 17 17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Keyword and mention tracking</h3>
+        </div>
+        <p>Get alerted when your product, your category or your competitor is mentioned.</p>
+        <div class="card__viz"><span class="tag tag--soon">Coming soon</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card__top">
+          <div class="card__icon">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M4 16V8m4 8V4m4 12v-6m4 6V7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Competitor footprint</h3>
+        </div>
+        <p>See which communities a competitor is already posting in, and how it goes for them.</p>
+        <div class="card__viz"><span class="tag tag--soon">Coming soon</span></div>
+      </div>
+
+      <div class="card card--full">
+        <div class="card__top">
+          <div class="card__icon">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M3 14l4-5 3.5 3L17 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Attribution: which communities actually send traffic</h3>
+          <span class="tag tag--soon card__soon">Coming soon</span>
+        </div>
+        <p>Track your own posts across every subreddit you target and see clicks, signups and comments per community, so budget and effort move to what works.</p>
+        <div class="card__viz">
+          <svg class="map-svg" viewBox="0 0 900 110" aria-hidden="true">
+            <path d="M0 92 C120 86 200 74 300 62 C420 48 520 36 640 30 C760 24 830 18 900 12" fill="none" stroke="#FF4500" stroke-width="2.5"/>
+            <path d="M0 100 C130 96 220 90 320 82 C440 72 540 62 660 56 C780 50 840 46 900 42" fill="none" stroke="#000" stroke-width="1.75"/>
+            <path d="M0 106 C150 104 260 100 380 94 C500 88 600 82 720 78 C820 74 860 72 900 70" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="1.5" stroke-dasharray="4 5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     ACCENT CTA BAND
+     ========================================================================== -->
+<section class="band band--accent">
+  <div class="wrap cta">
+    <div>
+      <span class="eyebrow">Distribution</span>
+      <h2 class="heading-lg">Make Reddit your distribution channel.</h2>
+      <p class="body-copy">
+        Stop guessing which community to post in. Start from the map, post where your
+        customers already are, and learn from what has already worked there.
+      </p>
+      <div class="btn-row">
+        <a class="btn btn--dark" href="#explore">Explore the map free</a>
+        <a class="btn btn--ghost" href="#features">See how it works</a>
+      </div>
+    </div>
+    <div class="cta__side">
+      <div class="cta__stat">
+        <span>Step one</span>
+        <b>Search your niche</b>
+      </div>
+      <div class="cta__stat">
+        <span>Step two</span>
+        <b>Read the map and the rules</b>
+      </div>
+      <div class="cta__stat">
+        <span>Step three</span>
+        <b>Post where it lands</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     FAQ. REVIEW every answer. Rules, pricing and data claims must match reality.
+     ========================================================================== -->
+<section class="band band--paper" id="faq">
+  <div class="wrap faq">
+    <div>
+      <span class="eyebrow">FAQ</span>
+      <h2 class="heading-lg">Questions, answered.</h2>
+      <p class="body-copy">
+        Anything we have not covered here, ask us directly and we will get back to you the same day.
+      </p>
+      <div class="btn-row"><a class="textlink" href="#contact">Contact us</a></div>
+    </div>
+
+    <div class="faq__list">
+      <details open>
+        <summary>How is this different from just searching Reddit?</summary>
+        <p>
+          Reddit search shows you posts. subsmap shows you communities, ranked. You get fit
+          scoring across millions of subreddits at once, the overlap between them, what format
+          has historically worked in each, and who the influential posters are. That is a
+          research project of several days compressed into one search.
+        </p>
+      </details>
+      <details>
+        <summary>Where does the data come from?</summary>
+        <p>
+          Public Reddit posts, comments and community metadata. Nothing private, nothing behind
+          a login. Overlap between communities is computed from public commenter activity
+          across subreddits.
+        </p>
+      </details>
+      <details>
+        <summary>How fresh is the map?</summary>
+        <p>
+          Community stats, top posts and rankings refresh daily. Historical post performance
+          covers the last 12 months so seasonal patterns stay visible.
+        </p>
+      </details>
+      <details>
+        <summary>Will posting where you suggest get me banned?</summary>
+        <p>
+          Following a subreddit's own rules is the only reliable protection, which is why
+          subsmap surfaces those rules alongside every recommendation, including whether links
+          are allowed, self promotion limits and karma gates. Read the rules, contribute before
+          you promote, and post as a person rather than a brand account.
+        </p>
+      </details>
+      <details>
+        <summary>Do you write or schedule the posts for me?</summary>
+        <p>
+          No. subsmap is research and targeting. You write the post, because posts that read
+          like they came from a real person are the only ones that work on Reddit.
+        </p>
+      </details>
+      <details>
+        <summary>Who is it for?</summary>
+        <p>
+          Founders launching without a budget, marketers who need channels that are not paid
+          ads, agencies running Reddit for clients, and anyone whose next hundred users are
+          already talking to each other in a community they have not found yet.
+        </p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     FINAL CTA
+     ========================================================================== -->
+<section class="band band--dark" id="pricing">
+  <div class="wrap final">
+    <div>
+      <span class="eyebrow eyebrow--on-dark">Start here</span>
+      <h2 class="heading-lg">Post where it actually lands.</h2>
+      <p class="body-copy">Search your niche, open the map, and see the communities worth your next post.</p>
+      <div class="btn-row">
+        <a class="btn btn--fill" href="#explore">Explore the map free</a>
+        <a class="btn btn--ghost-light" href="#contact">Talk to us</a>
+      </div>
+      <!-- REPLACE if signup is required to browse -->
+      <p class="fine">Browse the map without an account. No credit card.</p>
+    </div>
+
+    <div class="ledger">
+      <div><i></i><b>r/SaaS</b><span>FIT 94</span></div>
+      <div><i></i><b>r/indiehackers</b><span>FIT 89</span></div>
+      <div><i style="opacity:.7"></i><b>r/microsaas</b><span>FIT 81</span></div>
+      <div><i style="opacity:.45"></i><b>r/Entrepreneur</b><span>FIT 66</span></div>
+      <div><i style="opacity:.25"></i><b>r/startups</b><span>FIT 48</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     FOOTER
+     ========================================================================== -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a class="logo" href="/">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <rect width="28" height="28" rx="4" fill="#FF4500"/>
+            <circle cx="14" cy="14" r="3.4" fill="#000"/>
+            <circle cx="14" cy="14" r="7.4" stroke="#000" stroke-width="1.5"/>
+            <circle cx="14" cy="14" r="11" stroke="#000" stroke-width="1.5" stroke-opacity=".45"/>
+          </svg>
+          subsmap
+        </a>
+        <p>The map of Reddit, for anyone building distribution.</p>
+        <div class="socials">
+          <a href="#" aria-label="X"><svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path d="M3 3h4l3.2 4.4L14 3h3l-5.3 6.6L17.5 17h-4l-3.4-4.7L6 17H3l5.6-7L3 3Z"/></svg></a>
+          <a href="#" aria-label="Reddit"><svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><circle cx="10" cy="11" r="6.4"/><circle cx="15.6" cy="4.4" r="1.6"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path d="M3 7h3v10H3V7Zm1.5-4a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6ZM8 7h3v1.5c.6-1 1.7-1.7 3.1-1.7 2.2 0 3.4 1.4 3.4 4V17h-3v-5.4c0-1.3-.5-2.1-1.6-2.1-1 0-1.9.7-1.9 2.2V17H8V7Z"/></svg></a>
+        </div>
+      </div>
+
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#map">Subreddit map</a></li>
+          <li><a href="#features">Overlap graph</a></li>
+          <li><a href="#features">Top posts</a></li>
+          <li><a href="#features">Top voices</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="/r/entrepreneur">r/Entrepreneur</a></li>
+          <li><a href="/r/saas">r/SaaS</a></li>
+          <li><a href="/r/indiehackers">r/indiehackers</a></li>
+          <li><a href="/r/marketing">r/marketing</a></li>
+          <li><a href="/subreddits">Browse all subreddits</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Free tools</h4>
+        <ul>
+          <li><a href="/tools/subreddit-rules">Subreddit rules checker</a></li>
+          <li><a href="/tools/best-time-to-post">Best time to post</a></li>
+          <li><a href="/tools/overlap">Subreddit overlap finder</a></li>
+          <li><a href="/tools/karma">Karma requirements lookup</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/changelog">Changelog</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__legal">
+      <span>&copy; 2026 subsmap</span>
+      <span class="spacer">Not affiliated with or endorsed by Reddit, Inc.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  var nav = document.getElementById('nav');
+  var toggle = document.getElementById('navToggle');
+  toggle.addEventListener('click', function () {
+    var open = nav.classList.toggle('is-open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  var input = document.getElementById('heroInput');
+  document.querySelectorAll('.chips button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      input.value = btn.getAttribute('data-q');
+      input.focus();
+    });
+  });
+
+  document.getElementById('heroSearch').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var q = input.value.trim();
+    if (!q) { input.focus(); return; }
+    // window.location.href = 'https://app.subsmap.com/search?q=' + encodeURIComponent(q);
+    console.log('search:', q);
+  });
+</script>
+
+
+<!-- Version switcher: review chrome, not part of the design. Delete this line to ship a version on its own. -->
+<script src="/switcher.js" defer></script>
+</body>
+</html>
